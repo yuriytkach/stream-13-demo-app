@@ -1,0 +1,66 @@
+kafka:
+  bootstrap:
+    servers: localhost:9092,localhost:9093
+  key:
+    serializer: org.apache.kafka.common.serialization.StringSerializer
+    deserializer: org.apache.kafka.common.serialization.StringSerializer
+  value:
+    serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
+    deserializer: io.quarkus.kafka.client.serialization.ObjectMapperDeserializer
+
+mp:
+  messaging:
+    outgoing:
+      temp-out:
+        topic: "temperature"
+        connector: smallrye-kafka
+      room-out:
+        topic: "room"
+        connector: smallrye-kafka
+    incoming:
+      temp-in:
+        auto:
+          offset:
+            reset: "earliest"
+        topic: "temperature"
+        connector: smallrye-kafka
+        group:
+          id: log-consumer
+      room-in:
+        auto:
+          offset:
+            reset: "earliest"
+        topic: "room"
+        connector: smallrye-kafka
+        group:
+          id: log-consumer
+
+      tmp-in:
+        auto:
+          offset:
+            reset: "latest"
+        topic: "tmp"
+        connector: smallrye-kafka
+        group:
+          id: log-consumer
+
+quarkus:
+  kafka-streams:
+    bootstrap-servers: localhost:9092,localhost:9093
+    topics: room,temperature
+    cache:
+      max:
+        bytes:
+          buffering: 50
+      commit:
+        interval:
+          ms: 200
+      poll:
+        ms: 200
+      metadata:
+        max:
+          age:
+            ms: 3000000
+  log:
+    console:
+      darken: 1
